@@ -1,0 +1,278 @@
+services:
+  postgres-auth:
+    image: postgres:16.3
+    container_name: postgres-auth
+    restart: always
+    ports:
+      - "5431:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: auth_service
+    volumes:
+      - ./auth-service/postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/auth_init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - tm
+
+  postgres-user:
+    image: postgres:16.3
+    container_name: postgres-user
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: user_service
+    volumes:
+      - ./user-service/postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/user_init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - tm
+
+  postgres-task:
+    image: postgres:16.3
+    container_name: postgres-task
+    restart: always
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: task_service
+    volumes:
+      - ./task-service/postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/task_init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - tm
+
+  postgres-project:
+    image: postgres:16.3
+    container_name: postgres-project
+    restart: always
+    ports:
+      - "5434:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: project_service
+    volumes:
+      - ./project-service/postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/project_init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - tm
+
+  postgres-notification:
+    image: postgres:16.3
+    container_name: postgres-notification
+    restart: always
+    ports:
+      - "5435:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: notification_service
+    volumes:
+      - ./notification-service/postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/notification_init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - tm
+
+  redis-notification:
+    image: redis:7.4.0
+    container_name: redis-notification
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./notification-service/redis-data:/data
+    restart: always
+    networks:
+      - tm
+
+  redis-gateway:
+    image: redis:7.4.0
+    container_name: redis-gateway
+    ports:
+      - "6378:6379"
+    volumes:
+      - ./tm-api-gateway/redis-data:/data
+    restart: always
+    networks:
+      - tm
+
+  postgres-analytics:
+    image: postgres:16.3
+    container_name: postgres-analytics
+    restart: always
+    ports:
+      - "5437:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: analytics_service
+    volumes:
+      - ./analytics-service/postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/analytics_init.sql:/docker-entrypoint-initdb.d/init.sql
+
+#  spark-master:
+#    image: bitnami/spark:3.4.3
+#    container_name: spark-master
+#    environment:
+#      - SPARK_MODE=master
+#      - SPARK_MASTER_HOST=spark-master
+#      - SPARK_LOCAL_IP=spark-master
+#      - SPARK_DRIVER_PORT=10027 # Static port for driver communication
+#      - SPARK_BLOCK_MANAGER_PORT=10028 # Static port for block manager
+#    volumes:
+#      - ./analytics-service/apps:/opt/spark-apps
+#      - ./analytics-service/data:/opt/spark-data
+#    ports:
+#      - "9093:8080"  # Spark Master Web UI
+#      - "7077:7077"  # Spark Master Port
+#      - "10027:10027" # Driver port
+#      - "10028:10028" # Block manager port
+#
+#  spark-worker:
+#    image: bitnami/spark:3.4.3
+#    container_name: spark-worker
+#    environment:
+#      - SPARK_MODE=worker
+#      - SPARK_WORKER_CORES=1
+#      - SPARK_WORKER_MEMORY=1g
+#      - SPARK_EXECUTOR_MEMORY=1g
+#      - SPARK_MASTER_URL=spark://spark-master:7077
+#      - SPARK_LOCAL_IP=spark-worker
+#      - SPARK_DRIVER_PORT=10027
+#      - SPARK_BLOCK_MANAGER_PORT=10028
+#    volumes:
+#      - ./analytics-service/apps:/opt/spark-apps
+#      - ./analytics-service/data:/opt/spark-data
+#    ports:
+#      - "9094:8080"
+#      - "7000:7000"
+#
+#  spark-worker2:
+#    image: bitnami/spark:3.4.3
+#    container_name: spark-worker2
+#    environment:
+#      - SPARK_MODE=worker
+#      - SPARK_WORKER_CORES=1
+#      - SPARK_WORKER_MEMORY=1g
+#      - SPARK_EXECUTOR_MEMORY=1g
+#      - SPARK_MASTER_URL=spark://spark-master:7077
+#      - SPARK_LOCAL_IP=spark-worker2
+#      - SPARK_DRIVER_PORT=10029
+#      - SPARK_BLOCK_MANAGER_PORT=10030
+#    volumes:
+#      - ./analytics-service/apps:/opt/spark-apps
+#      - ./analytics-service/data:/opt/spark-data
+#    ports:
+#      - "9095:8080"
+#      - "7001:7001"
+
+  postgres-kanban:
+    image: postgres:16.3
+    container_name: postgres-kanban
+    restart: always
+    ports:
+      - "5436:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: kanban_service
+    volumes:
+      - ./kanban-service/postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/search_init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  mongodb:
+    image: mongo:7.0.12
+    container_name: mongo-comments
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongodb
+      MONGO_INITDB_ROOT_PASSWORD: mongodb
+      MONGO_INITDB_DATABASE: comments-service
+    volumes:
+      - ./comments-service/mongo_data:/data/db
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.7.0
+    hostname: zookeeper
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - tm
+
+  broker:
+    image: confluentinc/cp-kafka:7.7.0
+    container_name: broker
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - tm
+
+  #  schema-registry:
+  #    image: confluentinc/cp-schema-registry:7.7.0
+  #    hostname: schema-registry
+  #    container_name: schema-registry
+  #    depends_on:
+  #      - broker
+  #    ports:
+  #      - "8095:8081"
+  #    environment:
+  #      SCHEMA_REGISTRY_HOST_NAME: schema-registry
+  #      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: 'broker:29092'
+  #      SCHEMA_REGISTRY_LISTENERS: http://schema-registry:8095
+  #
+  #  kafka-ui:
+  #    container_name: kafka-ui
+  #    image: provectuslabs/kafka-ui:7.7.0
+  #    ports:
+  #      - "8096:8080"
+  #    depends_on:
+  #      - broker
+  #    environment:
+  #      KAFKA_CLUSTERS_NAME: local
+  #      KAFKA_CLUSTERS_BOOTSTRAPSERVERS: broker:29092
+  #      #      KAFKA_CLUSTERS_SCHEMAREGISTRY: http://schema-registry:8096
+  #      DYNAMIC_CONFIG_ENABLED: 'true'
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.0
+    container_name: elasticsearch
+    networks:
+      - elastic-net
+    ports:
+      - "127.0.0.1:9200:9200"
+    environment:
+      - ELASTIC_PASSWORD=elastic
+      - discovery.type=single-node
+      - xpack.security.http.ssl.enabled=false
+      - xpack.license.self_generated.type=trial
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: "1.0"
+
+networks:
+  elastic-net:
+    driver: bridge
+    name: elastic-net
+  tm:
+    driver: bridge

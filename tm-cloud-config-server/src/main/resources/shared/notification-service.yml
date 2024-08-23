@@ -1,0 +1,83 @@
+server:
+  port: 8083
+  forward-headers-strategy: framework
+
+logging:
+  level:
+    org.hibernate: info
+    org.springframework: info
+
+spring:
+  output:
+    ansi:
+      enabled: always
+  datasource:
+    url: jdbc:postgresql://localhost:5435/notification_service
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    database: postgresql
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: notification
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: "org.springframework.kafka.support.serializer.JsonDeserializer"
+      properties:
+        "[spring.json.type.mapping]":
+          event:com.example.event.TaskCreateEvent, 
+          event:com.example.event.TaskStatusEvent,
+          event:com.example.event.UserDeleteEvent
+    topics:
+      - createTask
+      - updateTask
+      - deleteUser
+  mail:
+    host: ${HOST_EMAIL}
+    port: 2525
+    username: ${USERNAME}
+    password: ${PASSWORD}
+  redis:
+    host: redis-notification
+    port: 6379
+    password: redis
+    session:
+      store-type: redis
+      redis:
+        flush-mode: on_save
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
+  instance:
+    preferIpAddress: true
+
+jwt:
+  secret: b84333cbb6e2c3885a7da2c87ce6a6ffc8f5993dca84b2f169dd990922922b25
+
+mail:
+  from: ${FROM_EMAIL}
+  subject:
+    - "You have been assigned with a new Task."
+    - "Your Task has been updated."
+    - "Reminder: Task deadline is approaching."
+  in-app-subject:
+    - "New task assigned to you: %s"
+    - "Task %s has been updated"
+    - "Reminder: Task %s is due tomorrow"
+  cron: 0 0 12 * * *
+
+session:
+  key:
+    prefix: "ws_sessions:"

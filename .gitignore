@@ -1,0 +1,31 @@
+# Ignore PostgreSQL and MongoDB data directories
+task-service/postgres_data/
+search-service/postgres_data/
+project-service/postgres_data/
+comments-service/mongo_data/
+analytics-service/postgres_data/
+notification-service/postgres_data/
+notification-service/redis-data/
+user-service/postgres_data/
+auth-service/postgres_data/
+kanban-service/postgres_data/
+comments-service/mongo_data/
+tm-api-gateway/redis-data
+
+# IntelliJ IDEA
+.idea/
+*.iml
+
+# Build directories
+build/
+out/
+target/
+
+# Dependency directories
+.gradle/
+.m2/
+
+# Environment files
+.env
+.env.local
+

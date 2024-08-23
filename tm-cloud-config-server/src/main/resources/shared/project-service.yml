@@ -1,0 +1,48 @@
+server:
+  port: 8082
+  forward-headers-strategy: framework
+
+logging:
+  level:
+    feign:
+      client: info
+    org.hibernate: info
+    org.springframework: info
+
+spring:
+  output:
+    ansi:
+      enabled: always
+  datasource:
+    url: jdbc:postgresql://localhost:5434/project_service
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    database: postgresql
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+  kafka:
+    bootstrap-servers: localhost:9092
+    template:
+      default-topic: project
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: "org.springframework.kafka.support.serializer.JsonSerializer"
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
+  instance:
+    preferIpAddress: true
+
+jwt:
+  secret: b84333cbb6e2c3885a7da2c87ce6a6ffc8f5993dca84b2f169dd990922922b25

@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: tm-kanban
+  config:
+    import: optional:configserver:http://localhost:8088

@@ -1,0 +1,53 @@
+server:
+  port: 8087
+  forward-headers-strategy: framework
+
+logging:
+  level:
+    org.hibernate: info
+    org.springframework: info
+
+spring:
+  output:
+    ansi:
+      enabled: always
+  datasource:
+    url: jdbc:postgresql://localhost:5436/kanban_service
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    database: postgresql
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: kanban
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: "org.springframework.kafka.support.serializer.JsonDeserializer"
+      properties:
+        "[spring.json.type.mapping]":
+          event:com.example.event.TaskCreateEvent, 
+          event:com.example.event.TaskStatusEvent,
+          event:com.example.event.TaskDeleteEvent,
+          event:com.example.event.ProjectDeleteEvent
+    topics:
+      - createTask
+      - updateTask
+      - deleteTask
+      - deleteProject
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
+  instance:
+    preferIpAddress: true
+
+jwt:
+  secret: b84333cbb6e2c3885a7da2c87ce6a6ffc8f5993dca84b2f169dd990922922b25

@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: registry-service
+  output:
+    ansi:
+      enabled: always
+  config:
+    import: optional:configserver:http://localhost:8088
+
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+  instance:
+    preferIpAddress: true
+
+#  optional:configserver:http://localhost:8888

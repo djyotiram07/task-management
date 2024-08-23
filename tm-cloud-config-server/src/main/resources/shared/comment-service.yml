@@ -1,0 +1,43 @@
+server:
+  port: 8084
+  forward-headers-strategy: framework
+
+logging:
+  level:
+    org.hibernate: info
+    org.springframework: info
+
+spring:
+  output:
+    ansi:
+      enabled: always
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: comments-service
+      username: mongodb
+      password: mongodb
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: comment
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: "org.springframework.kafka.support.serializer.JsonDeserializer"
+      properties:
+        "[spring.json.type.mapping]":
+          event:com.example.event.TaskDeleteEvent,
+          event:com.example.event.ProjectDeleteEvent
+    topics:
+      - deleteTask
+      - deleteProject
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
+  instance:
+    preferIpAddress: true
+
+jwt:
+  secret: b84333cbb6e2c3885a7da2c87ce6a6ffc8f5993dca84b2f169dd990922922b25

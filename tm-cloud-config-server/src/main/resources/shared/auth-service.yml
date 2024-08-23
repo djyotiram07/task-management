@@ -1,0 +1,52 @@
+server:
+  port: 8079
+  forward-headers-strategy: framework
+
+logging:
+  level:
+    org.hibernate: info
+    org.springframework: info
+
+spring:
+  output:
+    ansi:
+      enabled: always
+  datasource:
+    url: jdbc:postgresql://localhost:5431/auth_service
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    database: postgresql
+  kafka:
+    bootstrap-servers: localhost:9092
+    template:
+      default-topic: auth
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: "org.springframework.kafka.support.serializer.JsonSerializer"
+    consumer:
+      group-id: auth2
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: "org.springframework.kafka.support.serializer.JsonDeserializer"
+      properties:
+        "[spring.json.type.mapping]":
+          event:com.example.event.UserDeleteEvent
+    topics:
+      - deleteUser
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
+  instance:
+    preferIpAddress: true
+
+jwt:
+  secret: b84333cbb6e2c3885a7da2c87ce6a6ffc8f5993dca84b2f169dd990922922b25
