@@ -79,16 +79,6 @@ public class SearchController {
 }
 
 
-//api
-//GET /index_name/search
-//{
-//    query {
-//        // query goes here
-//    }
-//    // additional params
-//}
-
-
 
 
 

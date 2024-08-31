@@ -1,7 +1,6 @@
 package com.example.filter;
 
 import com.example.exceptions.UnauthorizedException;
-import com.example.service.ExecutionTracker;
 import com.example.service.RedisService;
 import com.example.utils.JwtService;
 import org.apache.logging.log4j.LogManager;

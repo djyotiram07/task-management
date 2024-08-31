@@ -19,13 +19,11 @@ public class CompositeFilter implements GatewayFilter {
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
         String path = request.getURI().getPath();
-        System.out.println("-----------composite------------------");
+
         System.out.println("path : "+path);
         if (LOGOUT_PATH.equals(path)) {
-            System.out.println("-----------matched----------------");
             return authenticationFilter.filter(exchange, chain);
         }
-        System.out.println("-----------composite------------------");
         return chain.filter(exchange);
     }
 }

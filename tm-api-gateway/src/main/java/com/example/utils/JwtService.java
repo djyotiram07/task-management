@@ -11,9 +11,6 @@ import java.security.Key;
 @Service
 public class JwtService {
 
-    // claims : register, (custom) private, public
-    // signature
-    // openssl rand -hex 32
     @Value("${jwt.secret}")
     private String SECRET_KEY;
 
@@ -21,7 +18,6 @@ public class JwtService {
         Jwts.parserBuilder().setSigningKey(getSignInKey()).build().parseClaimsJws(token);
     }
 
-    // Key
     private Key getSignInKey() {
         System.out.println("-----------------------------------------------------");
         System.out.println("secret key : "+ SECRET_KEY);

@@ -23,19 +23,6 @@ public class UserController {
     private final UserService userService;
     private final JwtService jwtService;
 
-//    @PostMapping
-//    public ResponseEntity<Void> registerUser(@Valid @RequestBody UserDto userDto,
-//                                             UriComponentsBuilder ucb) {
-//
-//        AuthenticationResponse registeredUser = userService.register(userDto);
-//        URI locationOfNewUser = ucb
-//                .path("/{id}")
-//                .buildAndExpand(registeredUser.id())
-//                .toUri();
-//
-//        return ResponseEntity.created(locationOfNewUser).build();
-//    }
-
     @GetMapping(value = "/{id}")
     public ResponseEntity<UserDto> findUserById(@PathVariable Long id) {
         UserDto user = userService.findUserById(id);

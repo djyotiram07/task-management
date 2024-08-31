@@ -159,7 +159,7 @@ public class TaskServiceImpl implements TaskService {
     @KafkaListener(topics = "deleteUser")
     public void userDeleteListener(UserDeleteEvent userDeleteEvent) {
         log.info("Received delete message from user service: {}", userDeleteEvent);
-        // another logic : just unassigned user [on one task many user cTask task = taskRepository.findByProjectId(projectDeleteEvent.id());an work or just unassigned]
+        // another logic : just unassigned user
         if (!taskRepository.existsByUserId(userDeleteEvent.id())) {
             throw new TaskNotFoundException("Task not found with user id " + userDeleteEvent.id());
         }

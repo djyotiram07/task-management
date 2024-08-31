@@ -29,27 +29,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull HttpServletRequest request,
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain) throws ServletException, IOException {
-        System.out.println("----------------------------------jwt filter : start--------------------------");
+
         var authHeader = request.getHeader("Authorization");
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        System.out.println("------------------------------------------------------");
-        System.out.println("Inside jwt filter [user-service] : " + authHeader);
-        System.out.println("------------------------------------------------------");
-
         String jwtToken = authHeader.substring(7);
         String userEmail = jwtService.extractUsername(jwtToken);
 
-        System.out.println("------------------------------------------------------");
-        System.out.println("Inside jwt filter [jwtToken] : " + jwtToken);
-        System.out.println("Inside jwt filter [userEmail] : " + userEmail);
-        System.out.println("------------------------------------------------------");
-
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            System.out.println("----------------------------start------------------------------");
             UserDetails userDetails = userDetailsService.loadUserByUsername(userEmail);
             if (jwtService.isTokenValid(jwtToken, userDetails)) {
 
@@ -61,9 +51,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             }
-            System.out.println("----------------------------end------------------------------");
         }
-        System.out.println("----------------------------------jwt filter : end--------------------------");
         filterChain.doFilter(request, response);
     }
 }

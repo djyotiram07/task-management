@@ -31,26 +31,4 @@ public class AuthController {
     ResponseEntity<AuthenticationResponse> register(@RequestBody AuthenticationRequest request) {
         return ResponseEntity.ok(service.login(request));
     }
-
-//    @GetMapping("/logout")
-//    public String customLogout(HttpServletRequest request,
-//                               HttpServletResponse response,
-//                               @RequestHeader("Authorization") String token) {
-//        System.out.println("------------------------------auth logout-----------------------");
-//        if (token != null && !token.isEmpty()) {
-//            System.out.println("Token: " + token);
-//            System.out.println("Username: " + jwtService.extractUsername(token));
-//            System.out.println("Roles: " + jwtService.extractRoles(token));
-//        }
-//
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        if (authentication != null) {
-//            System.out.println("Authentication details: " + authentication.getDetails());
-//            System.out.println("Authentication principal: " + authentication.getPrincipal());
-//
-//            SecurityContextHolder.clearContext();
-//        }
-//        return "redirect:/login";
-//    }
-
 }

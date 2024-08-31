@@ -14,9 +14,6 @@ import java.util.function.Function;
 @Service
 public class JwtService {
 
-    // claims : register, (custom) private, public
-    // signature
-    // openssl rand -hex 32
     @Value("${jwt.secret}")
     private String SECRET_KEY;
 
@@ -30,7 +27,6 @@ public class JwtService {
         return new HashSet<>(roles);
     }
 
-    // Claims
     private Claims extractAllClaims(String token) {
 
         return Jwts.parserBuilder()
@@ -46,7 +42,6 @@ public class JwtService {
         return claimResolver.apply(claims);
     }
 
-    // Key
     private Key getSignInKey() {
 
         byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
