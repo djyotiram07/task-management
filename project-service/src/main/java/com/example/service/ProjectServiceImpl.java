@@ -32,8 +32,8 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public ProjectDto createProject(ProjectDto projectDto, String username) {
+        log.info("Attempting to create project with details: {} by user: {}", projectDto, username);
         try {
-
             UserDto userDto = userServiceProxy.findUserById(projectDto.userId());
             if (userDto == null) {
                 throw new ProjectCommonException(
@@ -56,15 +56,19 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public ProjectDto findProjectById(Long id) {
-
+        log.info("Fetching project with ID: {}", id);
         Project project = projectRepository.findById(id)
-                .orElseThrow(() -> new ProjectNotFoundException("Project not found with id " + id));
+                .orElseThrow(() -> {
+                    log.error("Project not found with ID: {}", id);
+                    return new ProjectNotFoundException("Project not found with id " + id);
+                });
+        log.info("Project found with ID: {}", id);
         return projectMapper.projectToProjectDto(project);
     }
 
     @Override
     public void updateProjectById(Long id, ProjectDto projectDto) {
-
+        log.info("Updating project with ID: {}", id);
         if (!projectRepository.existsById(id)) {
             throw new ProjectNotFoundException("Project not found with id " + id);
         }
@@ -73,7 +77,7 @@ public class ProjectServiceImpl implements ProjectService {
             Project project = projectMapper.projectDtoToProject(projectDto);
             project.setId(id);
             projectRepository.save(project);
-
+            log.info("Project updated successfully with ID: {}", id);
         } catch (Exception e) {
             throw new ProjectCommonException("Error updating project: " + e.getMessage());
         }
@@ -81,7 +85,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public void deleteProjectById(Long id) {
-
+        log.info("Deleting project with ID: {}", id);
         if (!projectRepository.existsById(id)) {
             throw new ProjectNotFoundException("Project not found with id " + id);
         }
@@ -89,6 +93,7 @@ public class ProjectServiceImpl implements ProjectService {
         try {
             projectRepository.deleteById(id);
             kafkaTemplate2.send("deleteProject", id);
+            log.info("Project deleted successfully with ID: {}", id);
         } catch (Exception e) {
             throw new ProjectCommonException("Error deleting project: " + e.getMessage());
         }
@@ -96,8 +101,10 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public Page<ProjectDto> findAllProjectsByUserId(Long userId, Pageable pageable) {
-
+        log.info("Fetching all projects for user ID: {} with pageable: {}", userId, pageable);
         Page<Project> projects = projectRepository.findAllByUserId(userId, pageable);
+
+        log.info("Fetched {} projects for user ID: {}", projects.getTotalElements(), userId);
         return projects.map(projectMapper::projectToProjectDto);
     }
 

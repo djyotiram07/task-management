@@ -30,10 +30,8 @@ public class ApplicationConfig {
                 .orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
     }
 
-    // Fetch user details and encode password and more
     @Bean
     public AuthenticationProvider authenticationProvider() {
-
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
         authenticationProvider.setUserDetailsService(userDetailsService());
         authenticationProvider.setPasswordEncoder(passwordEncoder());
@@ -43,7 +41,6 @@ public class ApplicationConfig {
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-
         return authenticationConfiguration.getAuthenticationManager();
     }
 

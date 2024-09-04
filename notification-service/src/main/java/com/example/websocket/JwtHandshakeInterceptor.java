@@ -1,7 +1,6 @@
 package com.example.websocket;
 
 import com.example.utils.JwtService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.ServerHttpRequest;

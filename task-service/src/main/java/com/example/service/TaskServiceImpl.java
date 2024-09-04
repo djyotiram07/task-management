@@ -62,15 +62,16 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public TaskDto findTaskById(Long id) {
-
+        log.info("Fetching task with ID: {}", id);
         Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new TaskNotFoundException("Task not found with id " + id));
+        log.info("Task found with ID: {}", id);
         return taskMapper.taskToTaskDto(task);
     }
 
     @Override
     public void updateTaskById(Long id, TaskDto taskDto) {
-
+        log.info("Updating task with ID: {}", id);
         Optional<Task> task = taskRepository.findById(id);
         if (task.isEmpty()) {
             throw new TaskNotFoundException("Task not found with id " + id);
@@ -81,6 +82,7 @@ public class TaskServiceImpl implements TaskService {
             updatedTask.setId(task.get().getId());
             updatedTask.setTaskStatus(task.get().getTaskStatus());
             taskRepository.save(updatedTask);
+            log.info("Task updated successfully with ID: {}", id);
         } catch (Exception e) {
             throw new TaskCommonException("Error updating task: " + e.getMessage());
         }
@@ -88,7 +90,7 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public void updateTaskStatusById(Long id, TaskStatusDto taskStatusDto) {
-
+        log.info("Updating task status for task with ID: {}", id);
         Optional<Task> task = taskRepository.findById(id);
         if (task.isEmpty()) {
             throw new TaskNotFoundException("Task not found with id " + id);
@@ -98,6 +100,7 @@ public class TaskServiceImpl implements TaskService {
             task.get().setTaskStatus(taskStatusDto.taskStatus());
             taskRepository.save(task.get());
             sendTaskStatusEvent(task.get());
+            log.info("Task status updated successfully for task with ID: {}", id);
         } catch (Exception e) {
             throw new TaskCommonException("Error updating task: " + e.getMessage());
         }
@@ -105,7 +108,7 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public void deleteTaskById(Long id) {
-
+        log.info("Deleting task with ID: {}", id);
         if (!taskRepository.existsById(id)) {
             throw new TaskNotFoundException("Task not found with id " + id);
         }
@@ -113,6 +116,7 @@ public class TaskServiceImpl implements TaskService {
         try {
             taskRepository.deleteById(id);
             kafkaTemplate3.send("deleteTask", id);
+            log.info("Task deleted successfully with ID: {}", id);
         } catch (Exception e) {
             throw new TaskCommonException("Error deleting task: " + e.getMessage());
         }
@@ -120,8 +124,9 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public Page<TaskDto> findAllTasksByUserId(Long userId, Pageable pageable) {
-
+        log.info("Fetching all tasks for user ID: {} with pageable: {}", userId, pageable);
         Page<Task> tasks = taskRepository.findAllByUserId(userId, pageable);
+        log.info("Fetched {} tasks for user ID: {}", tasks.getTotalElements(), userId);
         return tasks.map(taskMapper::taskToTaskDto);
     }
 

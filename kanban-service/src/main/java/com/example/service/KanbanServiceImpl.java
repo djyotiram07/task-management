@@ -28,24 +28,31 @@ public class KanbanServiceImpl implements KanbanService {
 
     @Override
     public KanbanBoard getKanbanBoardByProjectId(Long projectId) {
+        log.info("Fetching KanbanBoard for project with ID: {}", projectId);
         KanbanBoard kanbanBoard = kanbanBoardRepository.findByProjectId(projectId);
 
         if (kanbanBoard != null) {
+            log.info("KanbanBoard found for project with ID: {}", projectId);
             return kanbanBoard;
         } else {
+            log.error("KanbanBoard not found for project with ID: {}", projectId);
             throw new KanbanBoardNotFoundException("KanbanBoard not found for project with id : " + projectId);
         }
     }
 
     @Override
     public TaskStatuses updateTaskStatus(Long taskStatusId, TaskStatus taskStatus) {
+        log.info("Updating TaskStatus with ID: {}", taskStatusId);
         Optional<TaskStatuses> optionalTaskStatus = taskStatusRepository.findById(taskStatusId);
         if (optionalTaskStatus.isPresent()) {
             TaskStatuses newTaskStatus = optionalTaskStatus.get();
             newTaskStatus.setStatusName(taskStatus);
+            log.info("TaskStatus updated successfully with ID: {}", taskStatusId);
             return taskStatusRepository.save(newTaskStatus);
+        } else {
+            log.error("TaskStatus with ID: {} not found", taskStatusId);
+            throw new KanbanCommonException("TaskStatus not found");
         }
-        throw new KanbanCommonException("TaskStatus not found");
     }
 
     @KafkaListener(topics = "createTask")

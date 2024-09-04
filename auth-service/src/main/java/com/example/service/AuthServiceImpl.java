@@ -28,7 +28,6 @@ import org.springframework.stereotype.Service;
 
 import javax.management.relation.RoleNotFoundException;
 import java.util.HashSet;
-import java.util.Locale;
 import java.util.Set;
 
 @Service
@@ -55,20 +54,26 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public AuthenticationResponse login(AuthenticationRequest request) {
+        log.info("Attempting to authenticate user with email: {}", request.email());
         authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(request.email(), request.password()));
 
         var user = userRepository.findByEmail(request.email())
-                .orElseThrow(() -> new UserNotFoundException("User not found."));
+                .orElseThrow(() -> {
+                    log.error("User not found with email: {}", request.email());
+                    return new UserNotFoundException("User not found.");
+                });
 
         var jwtToken = jwtService.generateJwtToken(user);
+        log.info("User successfully authenticated with email: {}", request.email());
         return new AuthenticationResponse(user.getId(), jwtToken);
     }
 
     @Override
     public AuthenticationResponse register(UserDto userDto) {
-
+        log.info("Attempting to register user with email: {}", userDto.email());
         if (userRepository.existsByEmail(userDto.email())) {
+            log.error("User already exists with email: {}", userDto.email());
             throw new UserAlreadyExistsException("User with email " + userDto.email() + " already exists.");
         }
 
@@ -79,7 +84,10 @@ public class AuthServiceImpl implements AuthService {
             Set<Role> roles = new HashSet<>();
             for (RoleDto roleDto : userDto.roles()) {
                 Role role = roleRepository.findById(roleDto.id())
-                        .orElseThrow(() -> new RoleNotFoundException("Role not found: " + roleDto.name()));
+                        .orElseThrow(() -> {
+                            log.error("Role not found with ID: {}", roleDto.id());
+                            return new RoleNotFoundException("Role not found: " + roleDto.name());
+                        });
                 roles.add(role);
             }
             user.setRoles(roles);
@@ -87,11 +95,12 @@ public class AuthServiceImpl implements AuthService {
             User savedUser = userRepository.save(user);
             sendUserCreateEvent(savedUser);
 
-            log.info("User registered with email: {}", userDto.email());
+            log.info("User successfully registered with email: {}", userDto.email());
             var jwtToken = jwtService.generateJwtToken(user);
 
             return new AuthenticationResponse(savedUser.getId(), jwtToken);
         } catch (Exception e) {
+            log.error("Error registering user with email: {}. Exception: {}", userDto.email(), e.getMessage());
             throw new UserCommonException("Error registering user: " + e.getMessage());
         }
     }

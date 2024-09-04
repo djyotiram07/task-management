@@ -4,6 +4,7 @@ import com.example.repository.ProjectProgressRepository;
 import com.example.repository.TaskStatisticsRepository;
 import com.example.repository.UserPerformanceRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Encoders;
 import org.apache.spark.sql.Row;
@@ -18,6 +19,7 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class AnalyticsComputation {
 
     private final SparkSession sparkSession;
@@ -45,6 +47,7 @@ public class AnalyticsComputation {
     }
 
     public void computeTaskStatistics() {
+        log.info("Computing task statistics");
         Dataset<Row> analyticsDataDF = buildDataFrame();
         analyticsDataDF.createOrReplaceTempView(ANALYTICS_DATA_TABLE);
 
@@ -69,9 +72,11 @@ public class AnalyticsComputation {
         if (!taskStatisticsList.isEmpty()) {
             taskStatisticsRepository.saveAll(taskStatisticsList);
         }
+        log.info("Finished computing task statistics");
     }
 
     public void computeUserPerformance() {
+        log.info("Computing user performance");
         Dataset<Row> analyticsDataDF = buildDataFrame();
         analyticsDataDF.createOrReplaceTempView(ANALYTICS_DATA_TABLE);
 
@@ -113,9 +118,11 @@ public class AnalyticsComputation {
         if (!userPerformanceList.isEmpty()) {
             userPerformanceRepository.saveAll(userPerformanceList);
         }
+        log.info("Finished computing user performance");
     }
 
     public void computeProjectProgress() {
+        log.info("Computing project progress");
         Dataset<Row> analyticsDataDF = buildDataFrame();
         analyticsDataDF.createOrReplaceTempView(ANALYTICS_DATA_TABLE);
 
@@ -150,6 +157,7 @@ public class AnalyticsComputation {
         if (!projectProgressList.isEmpty()) {
             projectProgressRepository.saveAll(projectProgressList);
         }
+        log.info("Finished computing project progress");
     }
 
 }

@@ -1,8 +1,6 @@
 package com.example.service;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
-import co.elastic.clients.elasticsearch._types.query_dsl.FuzzyQuery;
-import co.elastic.clients.elasticsearch._types.query_dsl.QueryBuilders;
 import com.example.event.*;
 import com.example.exceptions.SearchCommonException;
 import com.example.model.IndexedProject;
@@ -18,8 +16,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
-
-import javax.management.Query;
 
 @Service
 @RequiredArgsConstructor

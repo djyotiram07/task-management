@@ -5,7 +5,6 @@ import com.example.event.TaskStatusEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -27,7 +26,6 @@ public class InAppNotificationService {
     @Value("${mail.in-app-subject[2]}")
     private String IN_APP_REMINDER_SUBJECT;
 
-//    private final RedisTemplate<String, WebSocketSession> redisTemplate;
     private final ConcurrentHashMap<String, WebSocketSession> sessions;
 
     public void inAppNotificationForCreate(TaskCreateEvent taskCreateEvent, String currentUser) {
@@ -46,7 +44,6 @@ public class InAppNotificationService {
     }
 
     private void sendNotification(String currentUser, String message) {
-//        WebSocketSession session = (WebSocketSession) redisTemplate.opsForValue().get("ws_session:" + currentUser);
         WebSocketSession session = sessions.get(currentUser);
         if (session == null || !session.isOpen()) {
             log.warn("User {} is not connected via WebSocket", currentUser);

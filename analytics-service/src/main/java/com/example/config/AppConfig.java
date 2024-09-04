@@ -49,8 +49,6 @@ public class AppConfig {
                 .set("spark.executor.cores", sparkExecutorCores)
                 .set("spark.driver.memory", sparkDriverMemory)
                 .set("spark.driver.cores", sparkDriverCores)
-//                .set("spark.driver.port", sparkDriverPort)
-//                .set("spark.blockManager.port", sparkBlockManagerPort)
                 .set("spark.sql.shuffle.partitions", sparkSqlShufflePartitions);
 
         return SparkSession.builder()
